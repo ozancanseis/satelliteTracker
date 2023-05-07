@@ -1,18 +1,23 @@
+from magnetic_field_calculator import MagneticFieldCalculator
+import json
 # =========== MAIN =========== #
 
 def send_results(alt, az):
     global altitude, azimuth
     alt, az = alt.degrees, az.degrees
     print("calculated:")
-    print(alt-altitude)
-    print(az-azimuth) 
-    altitude = alt #To Arduino
-    azimuth = az #To Arduino
+    print("calculated:", alt)
+    print("calculated:", az)
+    # print(alt-altitude) #Arduino'ya fark yollanmayacak. Cihaz kümülatif değil doğrudan açıyla çalışıyor.
+    # print(az-azimuth) #Arduino'ya fark yollanmayacak. Cihaz kümülatif değil doğrudan açıyla çalışıyor.
+    # altitude = alt #To Arduino
+    # azimuth = az #To Arduino
 
 # =========== Import Local Files =========== #
 import satellite as st
 import planet as pt
 from declination import calculate_declination
+
 
 def decdeg2dms(dd): #DMS to Degree Transformation
     is_positive = dd >= 0
@@ -26,6 +31,7 @@ altitude = 0
 azimuth = calculate_declination()
 degree, minutes, seconds = decdeg2dms(azimuth)
 azimuth = degree + minutes/60 + seconds/3600
+print("azimuth: ", azimuth)
 
 
 if __name__ == "__main__":

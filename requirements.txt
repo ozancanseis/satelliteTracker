@@ -1,3 +1,11 @@
+#Arduino IDE
+#how to connect arduino doc
+#how to run code doc
+
 requests
 geocoder
 skyfield
+pyfirmata
+
+#add "if alt < 0, quit"
+#make servo calibration

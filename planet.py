@@ -15,7 +15,7 @@ def planet():
     print(planets, "\n")
     earth = planets['earth']
     observer = earth + wgs84.latlon(g.latlng[0], g.latlng[1])
-    print(observer)
+    print("OB",observer)
 
     observant_name = input("Planet To Observe: ")
     try:
@@ -25,21 +25,18 @@ def planet():
         quit()
 
     while True:
-        start_time = time.time()
 
         ts = load.timescale()
         t = ts.now()
-
 
         # What's the position of Mars, viewed from Earth?
         astrometric = observer.at(t).observe(observant)
         alt, az, distance = astrometric.apparent().altaz()
 
-        print('Altitude:', alt)
-        print('Azimuth:', az)
-        print('Distance: {:.1f} km'.format(distance.km))
+        #print('Altitude:', alt)
+        #print('Azimuth:', az)
+        #print('Distance: {:.1f} km'.format(distance.km))
 
         send_results(alt, az)
-        end_time = time.time()
 
-        time.sleep(30 - (end_time - start_time))
+        time.sleep(30)
