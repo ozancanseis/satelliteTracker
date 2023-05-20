@@ -8,20 +8,20 @@ from skyfield.api import N, W, load, wgs84
 
 def planet():
     g = geocoder.ip('me') #take observer position to calculate topocraphic values
-    print("Observer location:", g.latlng)
+    print('Observer location:', g.latlng)
 
     # Load the JPL ephemeris DE421 (covers 1900-2050).
     planets = load('de421.bsp')
-    print(planets, "\n")
+    print(planets, '\n')
     earth = planets['earth']
     observer = earth + wgs84.latlon(g.latlng[0], g.latlng[1])
-    print("OB",observer)
+    print('OB',observer)
 
-    observant_name = input("Planet To Observe: ")
+    observant_name = input('Planet To Observe: ')
     try:
         observant = planets[observant_name]
     except:
-        print("Planet not found.")
+        print('Planet not found.')
         quit()
 
     while True:

@@ -61,14 +61,14 @@ def track_satellite(satellite):
         topocentric = difference.at(t)
         alt, az, distance = topocentric.altaz()
 
-        if alt.degrees < 0:
-            print('The Object is below the horizon')
+        #if alt.degrees < 0:
+        #    print('The Object is below the horizon')
 
-        print('Altitude:', alt)
-        print('Azimuth:', az)
-        print('Distance: {:.1f} km'.format(distance.km))
+        #print('Altitude:', alt)
+        #print('Azimuth:', az)
+        #print('Distance: {:.1f} km'.format(distance.km))
 
         send_results(alt, az)
-        end_time = time.time()
-        time.sleep(30 - (end_time - start_time))
+       
+        time.sleep(30)
 
