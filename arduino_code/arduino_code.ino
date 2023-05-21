@@ -1,5 +1,4 @@
 #include <Servo.h>
-
 Servo horizontalServo; 
 Servo verticalServo;
 
@@ -20,16 +19,13 @@ void setup() {
 
 }
 
-void recvWithStartEndMarkers() {
+void recvWithStartEndMarkers(const char startMarker, const char endMarker) {
     static boolean recvInProgress = false;
     static byte ndx = 0;
-    char startMarker = '<';
-    char endMarker = '>';
     char rc;
 
     while (Serial.available() > 0 && newData == false) {
         rc = Serial.read();
-
         if (recvInProgress == true) {
             if (rc != endMarker) {
                 receivedChars[ndx] = rc;
@@ -53,14 +49,14 @@ void recvWithStartEndMarkers() {
 }
 
 void loop() {
-  recvWithStartEndMarkers();
+  recvWithStartEndMarkers('!', '?');
   if (newData) {
     horizontal = atoi(&receivedChars[0]);
     newData = false;
     horizontalServo.write(horizontal);
   }
 
-  recvWithStartEndMarkers();
+  recvWithStartEndMarkers('+', '-');
   if (newData) {
     vertical = atoi(&receivedChars[0]);
     newData = false;
