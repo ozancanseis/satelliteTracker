@@ -1,69 +1,75 @@
+// Python with arduino Servo control 
+
 #include <Servo.h>
 
-Servo horizontalServo; 
-Servo verticalServo;
+String value;
+const char delim = ';';
+int data[3]; //Holds most recent angles for servo
 
+char buffer[3];
+int bufferIndex;
 
-const byte numChars = 64;
-char receivedChars[numChars];
+int dataIndex = 0;
 
-boolean newData = false;
-
-int horizontal = 0; 
-int vertical = 0;
+Servo servo;
+int servoPos;
 
 void setup() {
-  horizontalServo.attach(9);
-  verticalServo.attach(10);
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  Serial.setTimeout(1); 
 
-  Serial.begin(9600);
+  servo.attach (A2); // Declare Servo Object (A2 = "Resume" pin)
+   
+  bufferIndex = 0;   
+  servo.write(180);
+  delay(2000);
+  servo.write(0);
+  delay(2000);
+  
+} // Setup End
 
+void readBuffer()
+{
+  if (Serial.available())
+  {
+    char c = Serial.read();
+    buffer[bufferIndex] = c;
+    bufferIndex++;
+
+  }
 }
 
-void recvWithStartEndMarkers() {
-    static boolean recvInProgress = false;
-    static byte ndx = 0;
-    char startMarker = '<';
-    char endMarker = '>';
-    char rc;
+void parseBuffer()
+{
+  
+  
+  if (buffer[bufferIndex-1] == ';')
+  {
+    
+    buffer[bufferIndex-1] = '\0';
 
-    while (Serial.available() > 0 && newData == false) {
-        rc = Serial.read();
+    int newData = atoi(buffer);
+       
+    servo.write( newData);   
+    
+    dataIndex++;
+    dataIndex %= sizeof(data)/sizeof(*data);
+        
+    bufferIndex = 0;
 
-        if (recvInProgress == true) {
-            if (rc != endMarker) {
-                receivedChars[ndx] = rc;
-                ndx++;
-                if (ndx >= numChars) {
-                    ndx = numChars - 1;
-                }
-            }
-            else {
-                receivedChars[ndx] = '\0'; // terminate the string
-                recvInProgress = false;
-                ndx = 0;
-                newData = true;
-            }
-        }
-
-        else if (rc == startMarker) {
-            recvInProgress = true;
-        }
+    for (int j = 0; j < sizeof(buffer)/sizeof(*buffer); j++)
+    {
+      buffer[j] = 1;
     }
+    
+  }
 }
 
 void loop() {
-  recvWithStartEndMarkers();
-  if (newData) {
-    horizontal = atoi(&receivedChars[0]);
-    newData = false;
-    horizontalServo.write(horizontal);
-  }
+   
+  // put your main code here, to run repeatedly:
+  readBuffer();
+  parseBuffer(); 
 
-  recvWithStartEndMarkers();
-  if (newData) {
-    vertical = atoi(&receivedChars[0]);
-    newData = false;
-    verticalServo.write(vertical);
-  }
 }

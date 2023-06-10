@@ -1,56 +1,24 @@
 # =========== Imports =========== #
+#libraries
 import satellite as st
 import planet as pt
-from declination import calculate_declination
-from .servo_mover import ServoMover
-# from magnetic_field_calculator import MagneticFieldCalculator
+#from declination import calculate_declination
+import serial
+import time
 
-# =========== GLOBAL VARIABLES =========== #
 
-BOARD_PORT = ""
-VERTICAL_SERVO_PIN = 9
-HORIZONTAL_SERVO_PIN = 10
+# =========== UNIT TRANSFORMER =========== #
+#transform units into degrees
 
-# =========== SERVO MOVERS =========== #
-
-vertical_servo   = ServoMover(BOARD_PORT, VERTICAL_SERVO_PIN)
-horizontal_servo = ServoMover(BOARD_PORT, HORIZONTAL_SERVO_PIN)
+# def decdeg2dms(dd): #DMS to Degree Transformation
+#     is_positive = dd >= 0
+#     dd = abs(dd)
+#     minutes,seconds = divmod(dd*3600,60)
+#     degrees,minutes = divmod(minutes,60)
+#     degrees = degrees if is_positive else -degrees
+#     return (degrees,minutes,seconds)ß
 
 # =========== MAIN =========== #
-def send_results(alt, az):
-    alt, az = alt.degrees, az.degrees
-    print("calculated alt:", alt)
-    print("calculated az:", az)
-    if az >= 0 and az <= 360:
-        if alt >= 0:
-            if alt <= 70:
-                vertical_servo.rotate_servo(alt)
-                horizontal_servo.rotate_servo(az)
-            else:
-                print("Altitude too high -", alt)
-        else:
-            print("Altitude too low -", alt)
-    else:
-        print("Invalid Azimuth -", az)
-
-
-def decdeg2dms(dd): #DMS to Degree Transformation
-    is_positive = dd >= 0
-    dd = abs(dd)
-    minutes,seconds = divmod(dd*3600,60)
-    degrees,minutes = divmod(minutes,60)
-    degrees = degrees if is_positive else -degrees
-    return (degrees,minutes,seconds)
-
-#altitude = 0
-#azimuth = calculate_declination()
-#degree, minutes, seconds = decdeg2dms(azimuth)
-#azimuth = degree + minutes/60 + seconds/3600
-#print("azimuth: ", azimuth)
-
-def fnc1():
-    print("triggerarduino")
-    
 
 def main():
     if __name__ == "__main__":
@@ -79,4 +47,7 @@ def main():
         elif track_input == 2:
             pt.planet()
 
-main()
+#run main() in infinite loop
+while True: 
+    
+    main()

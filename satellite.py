@@ -4,7 +4,60 @@ import time
 import geocoder
 from skyfield.api import load, wgs84
 from skyfield.api import EarthSatellite
-from main import send_results
+import serial
+import time
+
+# =========== GLOBAL VARIABLES =========== #
+
+#serial communication start (Port should be changed to the correct value)
+arduino = serial.Serial(port='/dev/cu.usbserial-14120', baudrate=115200, timeout=.1) #baudrate should be same with Arduino
+
+upper_limit1 = 360 #upper limit angle value for servoMotorA
+lower_limit1 = 0  #lower limit angle value for servoMotorB
+
+upper_limit2 = 360 #upper limit angle value for servoMotorA
+lower_limit2 = 0 #lower limit angle value for servoMotorB
+
+# =========== SERVO MOVERS =========== #
+#servo angle set function
+def servo_angle(x,y):
+
+    #first upper and lower limit
+
+    if(int(x)>upper_limit1 and str(y)=="a"):
+        print("Upper limit reached")
+        return -1
+    
+    if(int(x)<lower_limit1 and str(y)=="a"):
+        print("Lower Limit reached")
+        return -1
+    
+    #second upper and lower limit
+
+    if(int(x)>upper_limit2 and str(y)=="b"):
+        print("Upper limit reached")
+        return -1
+    
+    if(int(x)<lower_limit2 and str(y)=="b"):
+        print("Lower Limit reached")
+        return -1
+    
+
+        #bytes are written
+    #str(x) = degrees in string
+    #str(y) = which servo motor in string
+    arduino.write(bytes(str(x)+str(y)+",", 'utf-8'))
+    
+    #test clause
+    print(str(x)+str(y)+",")
+
+    #time sleep for 0.05 seconds to read serial_communication data
+    time.sleep(0.05)
+    data = arduino.readline()
+    
+    #returns serial_communication data
+    return data
+
 
 def print_stations():
     stations_url = 'http://celestrak.com/NORAD/elements/stations.txt'
@@ -60,15 +113,11 @@ def track_satellite(satellite):
 
         topocentric = difference.at(t)
         alt, az, distance = topocentric.altaz()
+        print("alt: ", alt._degrees)
+        print("az: ", az._degrees)
 
-        #if alt.degrees < 0:
-        #    print('The Object is below the horizon')
+        servo_angle(alt._degrees, "a")
+        servo_angle(az._degrees, "b")
 
-        #print('Altitude:', alt)
-        #print('Azimuth:', az)
-        #print('Distance: {:.1f} km'.format(distance.km))
-
-        send_results(alt, az)
-       
         time.sleep(30)
 
